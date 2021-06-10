@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31402.337
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Include", "Include", "{44FD14EF-F7FA-42CC-B618-E71A16B4EFF8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{BFED2AB6-2C7D-40B6-9DC6-3B904D142C1C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ALHE_Kontenery", "ALHE_Kontenery\ALHE_Kontenery.vcxproj", "{7D070733-9C79-49D9-B195-FB395B2C4893}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7D070733-9C79-49D9-B195-FB395B2C4893}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7D070733-9C79-49D9-B195-FB395B2C4893}.Debug|Win32.Build.0 = Debug|Win32
+		{7D070733-9C79-49D9-B195-FB395B2C4893}.Release|Win32.ActiveCfg = Release|Win32
+		{7D070733-9C79-49D9-B195-FB395B2C4893}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1572B44D-D649-4D39-84B3-472B4F0A0741}
+	EndGlobalSection
+EndGlobal
