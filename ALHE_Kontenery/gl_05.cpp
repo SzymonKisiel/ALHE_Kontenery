@@ -1,9 +1,10 @@
-#define GLEW_STATIC
+﻿#define GLEW_STATIC
 #include <GL/glew.h>
 #include "shprogram.h"
 #include <GLFW/glfw3.h>
 #include <SOIL.h>
 #include <iostream>
+#include <windows.h>
 using namespace std;
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -11,11 +12,202 @@ using namespace std;
 
 const GLuint WIDTH = 800, HEIGHT = 600;
 
+const GLfloat cameraSpeed = 0.05f;
+const GLfloat cameraAngularSpeed = 0.07f;
+const GLfloat cameraMouseSensitivity = 0.15f;
+
+glm::vec3 cameraPos = glm::vec3(2.5f, 5.0f, 30.0f);
+glm::vec3 cameraDirection = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+glm::vec3 cameraRight = glm::vec3(1.0f, 0.0f, 0.0f);
+
+float lastX;
+float lastY;
+bool firstMouse = true;
+
+struct CameraMovement {
+	bool w = false;
+	bool s = false;
+	bool a = false;
+	bool d = false;
+	bool z = false;
+	bool x = false;
+	bool up = false;
+	bool down = false;
+	bool left = false;
+	bool right = false;
+};
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
-	cout << key << endl;
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
+
+	CameraMovement* cm = (CameraMovement*)glfwGetWindowUserPointer(window);
+
+	//dol - gora
+	if (key == GLFW_KEY_Z) {
+		if (action == GLFW_PRESS)
+			cm->z = true;
+		else if (action == GLFW_RELEASE)
+			cm->z = false;
+	}
+	if (key == GLFW_KEY_X) {
+		if (action == GLFW_PRESS)
+			cm->x = true;
+		else if (action == GLFW_RELEASE)
+			cm->x = false;
+	}
+	//przod - tyl
+	if (key == GLFW_KEY_W) {
+		if (action == GLFW_PRESS)
+			cm->w = true;
+		else if (action == GLFW_RELEASE)
+			cm->w = false;
+	}
+	if (key == GLFW_KEY_S) {
+		if (action == GLFW_PRESS)
+			cm->s = true;
+		else if (action == GLFW_RELEASE)
+			cm->s = false;
+	}
+	//lewo - prawo
+	if (key == GLFW_KEY_A) {
+		if (action == GLFW_PRESS)
+			cm->a = true;
+		else if (action == GLFW_RELEASE)
+			cm->a = false;
+	}
+	if (key == GLFW_KEY_D) {
+		if (action == GLFW_PRESS)
+			cm->d = true;
+		else if (action == GLFW_RELEASE)
+			cm->d = false;
+	}
+
+	//obrot lewo - prawo
+	if (key == GLFW_KEY_LEFT) {
+		if (action == GLFW_PRESS)
+			cm->left = true;
+		else if (action == GLFW_RELEASE)
+			cm->left = false;
+	}
+	if (key == GLFW_KEY_RIGHT) {
+		if (action == GLFW_PRESS)
+			cm->right = true;
+		else if (action == GLFW_RELEASE)
+			cm->right = false;
+	}
+	//obrot gora - dol
+	if (key == GLFW_KEY_UP) {
+		if (action == GLFW_PRESS)
+			cm->up = true;
+		else if (action == GLFW_RELEASE)
+			cm->up = false;
+	}
+	if (key == GLFW_KEY_DOWN) {
+		if (action == GLFW_PRESS)
+			cm->down = true;
+		else if (action == GLFW_RELEASE)
+			cm->down = false;
+	}
+}
+
+void cameraControl(CameraMovement& cm) {
+	//dol - gora
+	if (cm.z)
+		cameraPos.y -= cameraSpeed;
+	if (cm.x)
+		cameraPos.y += cameraSpeed;
+
+	//przod - tyl
+	if (cm.w)
+		cameraPos += cameraDirection * cameraSpeed;
+	if (cm.s)
+		cameraPos -= cameraDirection * cameraSpeed;
+
+	//lewo - prawo
+	if (cm.a) {
+		cameraPos -= cameraRight * cameraSpeed;
+	}
+	if (cm.d) {
+		cameraPos += cameraRight * cameraSpeed;
+	}
+
+	//obrot lewo - prawo
+	if (cm.left) {
+		glm::mat4 m;
+		m = glm::rotate(m, glm::radians(1.0f * cameraAngularSpeed), glm::vec3(0.0f, 1.0f, 0.0f));
+		cameraDirection = glm::normalize(glm::vec3((m * glm::vec4(cameraDirection, 1.0f))) * cameraAngularSpeed);
+
+		m = glm::mat4(1.0f);
+		m = glm::rotate(m, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		cameraRight = glm::vec3((m * glm::vec4(cameraDirection, 1.0f)));
+		cameraRight = glm::normalize(glm::vec3(cameraRight.x, 0.0f, cameraRight.z));
+	}
+	if (cm.right) {
+		glm::mat4 m;
+		m = glm::rotate(m, glm::radians(-1.0f * cameraAngularSpeed), glm::vec3(0.0f, 1.0f, 0.0f));
+		cameraDirection = glm::normalize(glm::vec3(m * glm::vec4(cameraDirection, 1.0f)));
+
+		m = glm::mat4(1.0f);
+		m = glm::rotate(m, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		cameraRight = glm::vec3((m * glm::vec4(cameraDirection, 1.0f)));
+		cameraRight = glm::normalize(glm::vec3(cameraRight.x, 0.0f, cameraRight.z));
+	}
+
+	//obrot gora - dol
+	if (cm.up) {
+		if (cameraDirection.y >= 0.99f) //maksymalny obrot ok. 90 stopni do gory
+			cameraDirection.y = 0.99f;
+		else {
+			glm::mat4 m;
+			m = glm::rotate(m, glm::radians(1.0f * cameraAngularSpeed), cameraRight);
+			cameraDirection = glm::vec3(m * glm::vec4(cameraDirection, 1.0f));
+		}
+	}
+	if (cm.down) {
+		if (cameraDirection.y <= -0.99f) //minimalny obrot ok. 90 stopni do dolu
+			cameraDirection.y = -0.99f;
+		else {
+			glm::mat4 m;
+			m = glm::rotate(m, glm::radians(-1.0f * cameraAngularSpeed), cameraRight);
+			cameraDirection = glm::vec3(m * glm::vec4(cameraDirection, 1.0f));
+		}
+	}
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+	if (firstMouse) {
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos;
+	lastX = xpos;
+	lastY = ypos;
+
+	//obrot lewo - prawo
+	glm::mat4 m;
+	m = glm::rotate(m, glm::radians(-xoffset * 1.0f * cameraMouseSensitivity), glm::vec3(0.0f, 1.0f, 0.0f));
+	cameraDirection = glm::normalize(glm::vec3((m * glm::vec4(cameraDirection, 1.0f))) * cameraAngularSpeed);
+
+	m = glm::mat4(1.0f);
+	m = glm::rotate(m, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	cameraRight = glm::vec3((m * glm::vec4(cameraDirection, 1.0f)));
+	cameraRight = glm::normalize(glm::vec3(cameraRight.x, 0.0f, cameraRight.z));
+
+	//obrot gora - dol
+	if (cameraDirection.y > 0.95f)
+		cameraDirection.y = 0.95f;
+	else if (cameraDirection.y < -0.95f)
+		cameraDirection.y = -0.95f;
+	else {
+		glm::mat4 m;
+		m = glm::rotate(m, glm::radians(yoffset * cameraAngularSpeed), cameraRight);
+		cameraDirection = glm::normalize(glm::vec3(m * glm::vec4(cameraDirection, 1.0f)));
+	}
 }
 
 GLuint LoadMipmapTexture(GLuint texId, const char* fname)
@@ -71,7 +263,10 @@ int main()
 		if (window == nullptr)
 			throw exception("GLFW window not created");
 		glfwMakeContextCurrent(window);
+		CameraMovement cm;
+		glfwSetWindowUserPointer(window, (void*)&cm);
 		glfwSetKeyCallback(window, key_callback);
+		glfwSetCursorPosCallback(window, mouse_callback);
 
 		glewExperimental = GL_TRUE;
 		if (glewInit() != GLEW_OK)
@@ -87,7 +282,7 @@ int main()
 		cout << "Max texture coords allowed: " << nrAttributes << std::endl;
 
 		// Build, compile and link shader program
-		ShaderProgram theProgram("gl_05.vert", "gl_05.frag");
+		ShaderProgram theProgram("shader.vert", "shader.frag");
 
 		// Set up vertex data 
 		GLfloat vertices[] = {
@@ -147,6 +342,7 @@ int main()
 		// main event loop
 		while (!glfwWindowShouldClose(window))
 		{
+			cameraControl(cm);
 			// Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
 			glfwPollEvents();
 
@@ -154,13 +350,24 @@ int main()
 			glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
+			
+			glm::mat4 view = glm::lookAt(cameraPos, cameraDirection + cameraPos, cameraUp);
+			glm::mat4 projection = glm::perspective(45.0f, (GLfloat)WIDTH / (GLfloat)HEIGHT, 1.0f, 150.0f);
+			
+			GLint viewLoc = glGetUniformLocation(theProgram.get_programID(), "view");
+			GLint projLoc = glGetUniformLocation(theProgram.get_programID(), "projection");
+			
+			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+			glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+
 			// Bind Textures using texture units
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture0);
-			glUniform1i(glGetUniformLocation(theProgram.get_programID(), "Texture0"), 0);
+			//glUniform1i(glGetUniformLocation(theProgram.get_programID(), "Texture0"), 0);
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, texture1);
-			glUniform1i(glGetUniformLocation(theProgram.get_programID(), "Texture1"), 1);
+			//glUniform1i(glGetUniformLocation(theProgram.get_programID(), "Texture1"), 1);
 
 			glm::mat4 trans;
 			static GLfloat rot_angle = 0.0f;
@@ -180,6 +387,7 @@ int main()
 
 			// Swap the screen buffers
 			glfwSwapBuffers(window);
+			Sleep(1);
 		}
 		glDeleteVertexArrays(1, &VAO);
 		glDeleteBuffers(1, &VBO);
