@@ -1,5 +1,24 @@
 #include "Container.h"
 
+Container::Container()
+{
+	this->height = 1;
+	this->width = 1;
+	this->length = 1;
+
+	this->number = 1;
+	this->color = "white";
+
+	this->capacity = height * width * length;
+
+	this->rightX = this->width;
+	this->leftX = 0;
+	this->upY = this->height;
+	this->downY = 0;
+	this->bottomZ = this->length;
+	this->frontZ = 0;
+}
+
 Container::Container(int height, int width, int length, int number, string color) {
 	this->height = height;
 	this->width = width;
