@@ -19,6 +19,7 @@ class Container {
 		int number;
 		string color;
 	public:
+		Container();
 		Container(int height, int width, int length, int number, string color);
 		void setPosition(int positionX, int positionY, int positionZ);
 		void changeSize(int height, int width, int length);
