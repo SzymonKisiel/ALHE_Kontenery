@@ -88,6 +88,7 @@
     <ClCompile Include="Container.cpp" />
     <ClCompile Include="gl_05.cpp" />
     <ClCompile Include="shprogram.cpp" />
+    <ClCompile Include="Subject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.frag" />
@@ -100,6 +101,7 @@
   <ItemGroup>
     <ClInclude Include="Container.h" />
     <ClInclude Include="shprogram.h" />
+    <ClInclude Include="Subject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

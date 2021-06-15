@@ -21,11 +21,11 @@ class Subject
 	public:
 		Subject(vector <int> chromosome, vector <Container> packListIn, Container container);
 		vector <int> createChromosome(int n);
-		void mutate();
-		int number_of_mutations();
+		vector <int> mutate();
+		int numberOfMutations();
 		vector <Container> packListInOrder(vector <int> chromosome, vector <Container> packListIn);
 		int calcValue();
-		void putContainer();
+		bool putContainer(Container container);
 
 };
 

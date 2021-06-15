@@ -36,11 +36,30 @@ vector <int> Subject::createChromosome(int n) {
 	return chromosome;
 }
 
-void Subject::mutate() {
+vector <int> Subject::mutate() {
+	int chromosomeLenght = this->chromosome.size();
+	int numberOfMutations = this->numberOfMutations();
+	vector <int> newChromosome = this->chromosome;
 
+	int randNumber1, randNumber2;
+	int itemNumber1, itemNumber2;
+
+	for (int i = 0; i < numberOfMutations; ++i) {
+		randNumber1 = rand() % n;
+		randNumber2 = rand() % n;
+
+		while(randNumber1 == randNumber2) randNumber2 = rand() % n;
+
+		itemNumber1 = newChromosome[randNumber1];
+		itemNumber2 = newChromosome[randNumber2];
+		newChromosome[randNumber1] = itemNumber2;
+		newChromosome[randNumber2] = itemNumber1;
+	}
+
+	return newChromosome;
 }
 
-int Subject::number_of_mutations() {
+int Subject::numberOfMutations() {
 	const int SIZE = 20;
 
 	int mutations[SIZE] = { 1,1,1,1,1,1,1,1,1,1,2,2,2,2,3,3,3,4,4,5 };
@@ -65,9 +84,76 @@ vector <Container> Subject::packListInOrder(vector <int> chromosome, vector <Con
 }
 
 int Subject::calcValue() {
-	return 0;
+	int iter = 0;
+	int packedSpace = 0;
+	vector <Container> packs;
+
+	this->freeSpaceList.clear();
+	this->freeSpaceList.push_back(this->container);
+	this->packedList.clear();
+
+	for (int i = 0; i < this->packList.size(); ++i) {
+		packs.push_back(this->packList[i]);
+	}
+
+	while (this->putContainer(packs[iter]) && iter < packs.size()) { // packs.size() - 1 ??
+		++iter;
+	}
+
+	for (int i = 0; i < this->packedList.size(); ++i) {
+		packedSpace += packedList[i].getWidth() * packedList[i].getHeight() * packedList[i].getLength();
+	}
+
+	return packedSpace;
 }
 
-void Subject::putContainer() {
+bool Subject::putContainer(Container container) {
+	bool success = false;
 
+	for (int i = 0; i < this->freeSpaceList.size(); ++i) {
+		if (!success && container.getWidth() <= freeSpaceList[i].getWidth() && container.getHeight() <= freeSpaceList[i].getHeight() && container.getLength() <= freeSpaceList[i].getLength()) {
+			container.setPosition(freeSpaceList[i].getLeftX(), freeSpaceList[i].getDownY(), freeSpaceList[i].getFrontZ());
+			this->packedList.push_back(container);
+			success = true;
+
+			Container newFreeSpace2(freeSpaceList[i].getWidth(), freeSpaceList[i].getHeight() - container.getHeight(), freeSpaceList[i].getLength());
+			newFreeSpace2.setPosition(freeSpaceList[i].getLeftX(), freeSpaceList[i].getDownY() + container.getHeight(), freeSpaceList[i].getFrontZ());
+			Container newFreeSpace1(freeSpaceList[i].getWidth() - container.getWidth(), freeSpaceList[i].getHeight(), freeSpaceList[i].getLength());
+			newFreeSpace1.setPosition(freeSpaceList[i].getLeftX() + container.getWidth(), freeSpaceList[i].getDownY(), freeSpaceList[i].getFrontZ());
+			Container newFreeSpace3(freeSpaceList[i].getWidth(), freeSpaceList[i].getHeight(), freeSpaceList[i].getLength() - container.getLength());
+			newFreeSpace3.setPosition(freeSpaceList[i].getLeftX(), freeSpaceList[i].getDownY(), freeSpaceList[i].getFrontZ() + container.getLength());
+			
+			this->freeSpaceList.erase(freeSpaceList.begin() + i);
+			this->freeSpaceList.push_back(newFreeSpace1);
+			this->freeSpaceList.push_back(newFreeSpace2);
+			this->freeSpaceList.push_back(newFreeSpace3);
+		}
+	}
+
+	for (int i = 0; i < this->freeSpaceList.size(); ++i) {
+		if (container.checkCollision(freeSpaceList[i])) {
+			if (container.getLeftX() <= freeSpaceList[i].getLeftX() && container.getDownY() <= freeSpaceList[i].getDownY() && container.getFrontZ() <= freeSpaceList[i].getFrontZ()) {
+				freeSpaceList[i].changeSize(0, 0, 0);
+			}
+			else if (container.getLeftX() > freeSpaceList[i].getLeftX()) {
+				freeSpaceList[i].changeSize(container.getLeftX() - freeSpaceList[i].getLeftX(), freeSpaceList[i].getHeight(), freeSpaceList[i].getLength());
+			}
+			else if (container.getDownY() > freeSpaceList[i].getDownY()) {
+				freeSpaceList[i].changeSize(freeSpaceList[i].getWidth(), container.getDownY() - freeSpaceList[i].getDownY(), freeSpaceList[i].getLength());
+			}
+			else if (container.getFrontZ() > freeSpaceList[i].getFrontZ()) {
+				freeSpaceList[i].changeSize(freeSpaceList[i].getWidth(), freeSpaceList[i].getHeight(), container.getFrontZ() - freeSpaceList[i].getFrontZ());
+			}
+		}
+	}
+
+	for (int i = 0; i < this->freeSpaceList.size(); ++i) {
+		if (freeSpaceList[i].getCapacity() == 0) {
+			freeSpaceList.erase(freeSpaceList.begin() + i);
+		}
+	}
+
+	//dodaæ sortowanie wolnych przestrzeni
+
+	return success;
 }
