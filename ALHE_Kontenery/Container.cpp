@@ -1,6 +1,43 @@
 #include "Container.h"
 
-Container::Container(int height, int width, int length, int number, string color) {
+Container::Container()
+{
+	this->height = 1;
+	this->width = 1;
+	this->length = 1;
+
+	this->number = -1;
+	this->color = "white";
+
+	this->capacity = height * width * length;
+
+	this->rightX = this->width;
+	this->leftX = 0;
+	this->upY = this->height;
+	this->downY = 0;
+	this->bottomZ = this->length;
+	this->frontZ = 0;
+}
+
+Container::Container(int width, int height, int length) {
+	this->height = height;
+	this->width = width;
+	this->length = length;
+
+	this->number = -1;
+	this->color = "white";
+
+	this->capacity = height * width * length;
+
+	this->rightX = this->width;
+	this->leftX = 0;
+	this->upY = this->height;
+	this->downY = 0;
+	this->bottomZ = this->length;
+	this->frontZ = 0;
+}
+
+Container::Container(int width, int height, int length, int number, string color) {
 	this->height = height;
 	this->width = width;
 	this->length = length;
@@ -27,7 +64,7 @@ void Container::setPosition(int positionX, int positionY, int positionZ) {
 	this->frontZ = positionZ;
 }
 
-void Container::changeSize(int height, int width, int length) {
+void Container::changeSize(int width, int height, int length) {
 	this->height = height;
 	this->width = width;
 	this->length = length;
@@ -47,6 +84,38 @@ bool Container::checkCollision(Container container) {
 	if (collisionX && collisionY && collisionZ)
 		return true;
 	else return false;
+}
+
+int Container::getHeight() {
+	return this->height;
+}
+
+int Container::getWidth() {
+	return this->width;
+}
+
+int Container::getLength() {
+	return this->length;
+}
+
+int Container::getCapacity() {
+	return this->capacity;
+}
+
+string Container::getColor() {
+	return this->color;
+}
+
+int Container::getLeftX() {
+	return this->leftX;
+}
+
+int Container::getDownY() {
+	return this->downY;
+}
+
+int Container::getFrontZ() {
+	return this->frontZ;
 }
 
 void Container::printContainer() {
