@@ -1,5 +1,10 @@
 #include "Subject.h"
 
+Subject::Subject() {
+	this->n = 0;
+	this->value = 0;
+}
+
 Subject::Subject(vector <int> chromosome, vector <Container> packListIn, Container container) {
 	this->n = packListIn.size();
 
@@ -116,10 +121,10 @@ bool Subject::putContainer(Container container) {
 			this->packedList.push_back(container);
 			success = true;
 
-			Container newFreeSpace2(freeSpaceList[i].getWidth(), freeSpaceList[i].getHeight() - container.getHeight(), freeSpaceList[i].getLength());
-			newFreeSpace2.setPosition(freeSpaceList[i].getLeftX(), freeSpaceList[i].getDownY() + container.getHeight(), freeSpaceList[i].getFrontZ());
 			Container newFreeSpace1(freeSpaceList[i].getWidth() - container.getWidth(), freeSpaceList[i].getHeight(), freeSpaceList[i].getLength());
 			newFreeSpace1.setPosition(freeSpaceList[i].getLeftX() + container.getWidth(), freeSpaceList[i].getDownY(), freeSpaceList[i].getFrontZ());
+			Container newFreeSpace2(freeSpaceList[i].getWidth(), freeSpaceList[i].getHeight() - container.getHeight(), freeSpaceList[i].getLength());
+			newFreeSpace2.setPosition(freeSpaceList[i].getLeftX(), freeSpaceList[i].getDownY() + container.getHeight(), freeSpaceList[i].getFrontZ());
 			Container newFreeSpace3(freeSpaceList[i].getWidth(), freeSpaceList[i].getHeight(), freeSpaceList[i].getLength() - container.getLength());
 			newFreeSpace3.setPosition(freeSpaceList[i].getLeftX(), freeSpaceList[i].getDownY(), freeSpaceList[i].getFrontZ() + container.getLength());
 			
@@ -182,4 +187,8 @@ bool Subject::putContainer(Container container) {
 	}
 
 	return success;
+}
+
+int Subject::getValue() {
+	return this->value;
 }
