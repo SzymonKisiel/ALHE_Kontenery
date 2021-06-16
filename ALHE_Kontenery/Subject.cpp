@@ -153,7 +153,33 @@ bool Subject::putContainer(Container container) {
 		}
 	}
 
-	//dodaæ sortowanie wolnych przestrzeni
+	bool sort = true;
+
+	while (sort) {
+		sort = false;
+
+		for (int i = 0; this->freeSpaceList.size() - 1; ++i) {
+			if (this->freeSpaceList[i].getDownY() > this->freeSpaceList[i + 1].getDownY()) {
+				Container temp = this->freeSpaceList[i];
+				this->freeSpaceList[i] = this->freeSpaceList[i + 1];
+				this->freeSpaceList[i + 1] = temp;
+				sort = true;
+			}
+			else if (this->freeSpaceList[i].getDownY() == this->freeSpaceList[i + 1].getDownY() && this->freeSpaceList[i].getLeftX() > this->freeSpaceList[i + 1].getLeftX()) {
+				Container temp = this->freeSpaceList[i];
+				this->freeSpaceList[i] = this->freeSpaceList[i + 1];
+				this->freeSpaceList[i + 1] = temp;
+				sort = true;
+			}
+			else if (this->freeSpaceList[i].getDownY() == this->freeSpaceList[i + 1].getDownY() && this->freeSpaceList[i].getLeftX() == this->freeSpaceList[i + 1].getLeftX() && this->freeSpaceList[i].getFrontZ() > this->freeSpaceList[i + 1].getFrontZ()) {
+				Container temp = this->freeSpaceList[i];
+				this->freeSpaceList[i] = this->freeSpaceList[i + 1];
+				this->freeSpaceList[i + 1] = temp;
+				sort = true;
+			}
+		}
+
+	}
 
 	return success;
 }

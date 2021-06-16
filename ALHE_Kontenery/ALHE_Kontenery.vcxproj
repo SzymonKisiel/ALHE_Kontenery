@@ -87,6 +87,7 @@
   <ItemGroup>
     <ClCompile Include="Container.cpp" />
     <ClCompile Include="gl_05.cpp" />
+    <ClCompile Include="Population.cpp" />
     <ClCompile Include="shprogram.cpp" />
     <ClCompile Include="Subject.cpp" />
   </ItemGroup>
@@ -100,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Container.h" />
+    <ClInclude Include="Population.h" />
     <ClInclude Include="shprogram.h" />
     <ClInclude Include="Subject.h" />
   </ItemGroup>
