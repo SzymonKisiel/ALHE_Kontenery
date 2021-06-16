@@ -2,7 +2,7 @@
 #include <vector>
 #include <cstdlib>
 
-#include "container.h"
+#include "Container.h"
 
 using namespace std;
 
@@ -19,6 +19,7 @@ class Subject
 		Container container;
 
 	public:
+		Subject();
 		Subject(vector <int> chromosome, vector <Container> packListIn, Container container);
 		vector <int> createChromosome(int n);
 		vector <int> mutate();
@@ -26,6 +27,7 @@ class Subject
 		vector <Container> packListInOrder(vector <int> chromosome, vector <Container> packListIn);
 		int calcValue();
 		bool putContainer(Container container);
+		int getValue();
 
 };
 
