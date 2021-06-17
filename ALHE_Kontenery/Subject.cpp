@@ -15,9 +15,7 @@ Subject::Subject(vector <int> chromosome, vector <Container> packListIn, Contain
 
 	this->packList = this->packListInOrder(this->chromosome, packListIn);
 	this->container = container;
-	//this->freeSpaceList.clear();
 	this->freeSpaceList.push_back(container);
-	//this->packedList.clear();
 	this->value = this->calcValue();
 
 }
@@ -82,7 +80,7 @@ vector <Container> Subject::packListInOrder(vector <int> chromosome, vector <Con
 	vector <Container> packListInOrder;
 
 	for (int i = 0; i < chromosome.size(); ++i) {
-		packListInOrder.push_back(packListIn[i]);
+		packListInOrder.push_back(packListIn[chromosome[i]]);
 	}
 
 	return packListInOrder;
@@ -101,7 +99,7 @@ int Subject::calcValue() {
 		packs.push_back(this->packList[i]);
 	}
 
-	while (this->putContainer(packs[iter]) && iter < packs.size()) { // packs.size() - 1 ??
+	while (iter < packs.size() && this->putContainer(packs[iter])) { // packs.size() - 1 ??
 		++iter;
 	}
 
@@ -163,7 +161,7 @@ bool Subject::putContainer(Container container) {
 	while (sort) {
 		sort = false;
 
-		for (int i = 0; this->freeSpaceList.size() - 1; ++i) {
+		for (int i = 0; i < this->freeSpaceList.size() - 1; ++i) {
 			if (this->freeSpaceList[i].getDownY() > this->freeSpaceList[i + 1].getDownY()) {
 				Container temp = this->freeSpaceList[i];
 				this->freeSpaceList[i] = this->freeSpaceList[i + 1];
@@ -191,4 +189,15 @@ bool Subject::putContainer(Container container) {
 
 int Subject::getValue() {
 	return this->value;
+}
+
+void Subject::print() {
+	cout << "Magazyn : " << endl;
+	this->container.printContainer();
+	cout << "Zapakowane kontenery: " << endl;
+	for (int i = 0; i < this->packedList.size(); ++i) {
+		cout << "-----------------------------" << endl;
+		packedList[i].printContainer();
+	}
+	cout << "-----------------------------" << endl;
 }

@@ -10,6 +10,9 @@ using namespace std;
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <ctime>
+#include "Population.h"
+
 const GLuint WIDTH = 800, HEIGHT = 600;
 
 const GLfloat cameraSpeed = 0.05f;
@@ -242,6 +245,31 @@ ostream& operator<<(ostream& os, const glm::mat4& mx)
 
 int main()
 {
+	srand(time(0));
+
+	vector <int> emptyChromosome;
+
+	Container container1(1,1,1);
+	Container container2(2,2,1);
+	Container container3(3,3,1);
+	Container container4(1,1,1);
+	Container container5(3,2,1);
+
+	Container magazine(5,5,1);
+
+	vector<Container> packList;
+
+
+	packList.push_back(container1);
+	packList.push_back(container2);
+	packList.push_back(container3);
+	packList.push_back(container4);
+	packList.push_back(container5);
+
+	Population population(packList, magazine, 0, 5, 10);
+
+	population.run();
+	
 	{
 		glm::mat4 trans;
 		cout << trans << endl;
