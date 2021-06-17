@@ -11,6 +11,7 @@ Population::Population(vector <Container> packList, Container container, int sim
 	for (int i = 0; i < mu; ++i) {
 		vector <int> emptyChromosome;
 		Subject subject(emptyChromosome, this->packList, this->container);
+		parents.push_back(subject);
 	}
 
 }
@@ -31,19 +32,23 @@ void Population::run() {
 			offsprings.push_back(parents[i]);
 		}
 
-		sort(offsprings.begin(), offsprings.end(), compareSubjects);
+		sort(offsprings.begin(), offsprings.end());
 
 		parents = offsprings;
 		if (this->mu < this->lambda) {
 			parents.erase(parents.begin() + mu , parents.end());
 		}
 
-		Subject bestSubject = parents[0];
+		bestSubject = parents[0];
 
 		++simulationTime;
 	}
+
+	//bestSubject.print();
+
 }
 
-bool Population::compareSubjects(Subject s1, Subject s2) {
-	return s1.getValue() < s2.getValue();
+bool operator <  (Subject s1, Subject s2)
+{
+	return s1.getValue() > s2.getValue();
 }

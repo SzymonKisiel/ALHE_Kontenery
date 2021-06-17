@@ -19,7 +19,7 @@ class Population
 		vector<Subject> parents;
 		vector<Subject> offsprings;
 
-		bool compareSubjects(Subject s1, Subject s2);
+		Subject bestSubject;
 
 	public:
 		Population(vector <Container> packList, Container container, int simulationLength, int mu, int lambda);
