@@ -85,7 +85,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="gl_05.cpp" />
+    <ClCompile Include="Cuboid.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="shprogram.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -93,10 +94,7 @@
     <None Include="shader.vert" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="iipw.png" />
-    <Image Include="weiti.png" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="Cuboid.h" />
     <ClInclude Include="shprogram.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
