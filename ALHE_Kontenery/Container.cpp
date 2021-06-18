@@ -110,12 +110,24 @@ int Container::getLeftX() {
 	return this->leftX;
 }
 
+int Container::getRightX() {
+	return this->rightX;
+}
+
 int Container::getDownY() {
 	return this->downY;
 }
 
+int Container::getUpY() {
+	return this->upY;
+}
+
 int Container::getFrontZ() {
 	return this->frontZ;
+}
+
+int Container::getBottomZ() {
+	return this->bottomZ;
 }
 
 void Container::printContainer() {

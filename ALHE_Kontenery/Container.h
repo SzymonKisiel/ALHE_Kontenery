@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 
 using namespace std;
@@ -33,8 +35,11 @@ class Container {
 		string getColor();
 
 		int getLeftX();
+		int getRightX();
 		int getDownY();
+		int getUpY();
 		int getFrontZ();
+		int getBottomZ();
 
 		void printContainer();
 };
