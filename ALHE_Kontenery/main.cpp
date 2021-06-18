@@ -19,11 +19,13 @@ using namespace std;
 
 #include <memory>
 
+#include "OpenGLFunctions.h"
+
 const GLuint WIDTH = 800, HEIGHT = 600;
 
-const GLfloat cameraSpeed = 0.05f;
-const GLfloat cameraAngularSpeed = 0.07f;
-const GLfloat cameraMouseSensitivity = 0.15f;
+const GLfloat cameraSpeed = 0.20f;
+const GLfloat cameraAngularSpeed = 0.30f;
+const GLfloat cameraMouseSensitivity = 0.40f;
 
 glm::vec3 cameraPos = glm::vec3(2.5f, 5.0f, 30.0f);
 glm::vec3 cameraDirection = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -219,121 +221,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	}
 }
 
-vector<GLfloat> getCuboidVertices(
-	float startX,
-	float startY,
-	float startZ,
-	float endX,
-	float endY,
-	float endZ,
-	float red = 0.0f,
-	float green = 0.0f,
-	float blue = 0.0f
-) {
-	vector<GLfloat> vertices = {
-		// position				// color			// texture
-		// front
-		startX, startY, startZ, red, green, blue,	0.0f, 0.0f,
-		startX, endY, startZ,	red, green, blue,	0.0f, 1.0f,
-		endX, endY, startZ,		red, green, blue,	1.0f, 1.0f,
 
-		startX, startY, startZ, red, green, blue,	0.0f, 0.0f,
-		endX, endY, startZ,		red, green, blue,	1.0f, 1.0f,
-		endX, startY, startZ,	red, green, blue,	1.0f, 0.0f,
-
-		// bottom
-		startX, startY, startZ, red, green, blue,	0.0f, 0.0f,
-		startX, startY, endZ,	red, green, blue,	0.0f, 1.0f,
-		endX, startY, startZ,	red, green, blue,	1.0f, 0.0f,
-
-		endX, startY, startZ,	red, green, blue,	1.0f, 0.0f,
-		endX, startY, endZ,		red, green, blue,	1.0f, 1.0f,
-		startX, startY, endZ,	red, green, blue,	0.0f, 1.0f,
-
-		// right
-		endX, startY, startZ,	red, green, blue,	0.0f, 0.0f,
-		endX, endY, startZ,		red, green, blue,	1.0f, 0.0f,
-		endX, startY, endZ,		red, green, blue,	0.0f, 1.0f,
-
-		endX, startY, endZ,		red, green, blue,	0.0f, 1.0f,
-		endX, endY, endZ,		red, green, blue,	1.0f, 1.0f,
-		endX, endY, startZ,		red, green, blue,	1.0f, 0.0f,
-
-		// left
-		startX, startY, startZ, red, green, blue,	0.0f, 0.0f,
-		startX, endY, startZ,	red, green, blue,	1.0f, 0.0f,
-		startX, startY, endZ,	red, green, blue,	0.0f, 1.0f,
-
-		startX, startY, endZ,	red, green, blue,	0.0f, 1.0f,
-		startX, endY, endZ,		red, green, blue,	1.0f, 1.0f,
-		startX, endY, startZ,	red, green, blue,	1.0f, 0.0f,
-
-		// up
-		startX, endY, startZ,	red, green, blue,	0.0f, 0.0f,
-		startX, endY, endZ,		red, green, blue,	0.0f, 1.0f,
-		endX, endY, startZ,		red, green, blue,	1.0f, 0.0f,
-
-		endX, endY, startZ,		red, green, blue,	1.0f, 0.0f,
-		endX, endY, endZ,		red, green, blue,	1.0f, 1.0f,
-		startX, endY, endZ,		red, green, blue,	0.0f, 1.0f,
-
-		//back
-		startX, startY, endZ,	red, green, blue,	0.0f, 0.0f,
-		startX, endY, endZ,		red, green, blue,	0.0f, 1.0f,
-		endX, endY, endZ,		red, green, blue,	1.0f, 1.0f,
-
-		startX, startY, endZ,	red, green, blue,	0.0f, 0.0f,
-		endX, endY, endZ,		red, green, blue,	1.0f, 1.0f,
-		endX, startY, endZ,		red, green, blue,	1.0f, 0.0f,
-	};
-	return vertices;
-}
-
-GLuint getCuboidVAO(
-	float startX,
-	float startY,
-	float startZ,
-	float endX,
-	float endY,
-	float endZ,
-	float red,
-	float green,
-	float blue
-  ){
-	auto vertices = getCuboidVertices(startX, startY, startZ, endX, endY, endZ, red, green, blue);
-	GLuint VAO, VBO;
-
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), &vertices[0], GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0); // position attribute
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))); // color
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))); // texture coordinates
-	glEnableVertexAttribArray(2);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-
-	return VAO;
-}
-
-GLuint getCuboidVAO(float startX, float startY, float startZ, float endX, float endY, float endZ) {
-	float red = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-	float green = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-	float blue = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-	return getCuboidVAO(startX, startY, startZ, endX, endY, endZ, red, green, blue);
-}
-
-GLuint getCuboidVAO(Container& container) {
-	return getCuboidVAO(container.getLeftX(), container.getDownY(), container.getFrontZ(), container.getRightX(), container.getUpY(), container.getBottomZ());
-}
-
-size_t getCuboidVerticesSize() {
-	return 288;
-}
 
 int main() {
 	srand(time(nullptr));
@@ -352,7 +240,11 @@ int main() {
 	}
 	
 	Population population(containers, warehouse, 5, 10);
-	population.run();
+	for (int i = 0; i < 100; ++i) {
+		population.run();
+	}
+	//auto best = population.getBestSubject();
+	//best.print();
 	auto packedContainers = population.getBestSubject().getPackedList();
 
 
@@ -388,10 +280,10 @@ int main() {
 
 
 		vector<GLuint> containersVAOs;
-		containersVAOs.push_back(getCuboidVAO(-10.0f, -0.5f, -10.0f, 10.0f, 0.0f, 10.0f));
 		for (auto container : packedContainers) {
 			containersVAOs.push_back(getCuboidVAO(container));
 		}
+		GLuint warehouseVAO = getWarehouseVAO(warehouse);
 
 		glBindVertexArray(0);
 
@@ -425,19 +317,16 @@ int main() {
 
 			// Draw our first triangle
 			theProgram.Use();
-
-			//testContainer.draw();
-			//for (auto& cuboid : containerCuboids) {
-			//	//cuboid.draw();
-			//	glBindVertexArray(cuboid.getVAO());
-			//	glDrawArrays(GL_TRIANGLES, 0, cuboid.getVerticesSize());
-			//	glBindVertexArray(0);
-			//}
+			
 			for (auto VAO : containersVAOs) {
 				glBindVertexArray(VAO);
-				glDrawArrays(GL_TRIANGLES, 0, getCuboidVerticesSize());
+				glDrawArrays(GL_TRIANGLES, 0, cuboidVerticesSize);
 				glBindVertexArray(0);
 			}
+			glBindVertexArray(warehouseVAO);
+			glDrawArrays(GL_TRIANGLES, 0, warehouseVerticesSize);
+			glBindVertexArray(0);
+
 
 			// Swap the screen buffers
 			glfwSwapBuffers(window);
