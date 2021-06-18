@@ -13,8 +13,6 @@ class Population
 		vector <Container> packList;
 		Container container;
 
-		int simulationLength;
-		int simulationTime;
 		int mu;
 		int lambda;
 
@@ -24,7 +22,8 @@ class Population
 		Subject bestSubject;
 
 	public:
-		Population(vector <Container> packList, Container container, int simulationLength, int mu, int lambda);
+		Population(vector <Container> packList, Container container, int mu, int lambda);
 		void run();
+		Subject getBestSubject();
 };
 

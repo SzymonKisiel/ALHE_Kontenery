@@ -31,6 +31,7 @@ class Subject
 		int calcValue();
 		bool putContainer(Container container);
 		int getValue();
+		vector <Container> getPackedList();
 		void print();
 };
 
