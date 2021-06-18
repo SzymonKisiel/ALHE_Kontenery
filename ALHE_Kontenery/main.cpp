@@ -219,6 +219,121 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	}
 }
 
+vector<GLfloat> getCuboidVertices(
+	float startX,
+	float startY,
+	float startZ,
+	float endX,
+	float endY,
+	float endZ,
+	float red = 0.0f,
+	float green = 0.0f,
+	float blue = 0.0f
+) {
+	vector<GLfloat> vertices = {
+		// position				// color			// texture
+		// front
+		startX, startY, startZ, red, green, blue,	0.0f, 0.0f,
+		startX, endY, startZ,	red, green, blue,	0.0f, 1.0f,
+		endX, endY, startZ,		red, green, blue,	1.0f, 1.0f,
+
+		startX, startY, startZ, red, green, blue,	0.0f, 0.0f,
+		endX, endY, startZ,		red, green, blue,	1.0f, 1.0f,
+		endX, startY, startZ,	red, green, blue,	1.0f, 0.0f,
+
+		// bottom
+		startX, startY, startZ, red, green, blue,	0.0f, 0.0f,
+		startX, startY, endZ,	red, green, blue,	0.0f, 1.0f,
+		endX, startY, startZ,	red, green, blue,	1.0f, 0.0f,
+
+		endX, startY, startZ,	red, green, blue,	1.0f, 0.0f,
+		endX, startY, endZ,		red, green, blue,	1.0f, 1.0f,
+		startX, startY, endZ,	red, green, blue,	0.0f, 1.0f,
+
+		// right
+		endX, startY, startZ,	red, green, blue,	0.0f, 0.0f,
+		endX, endY, startZ,		red, green, blue,	1.0f, 0.0f,
+		endX, startY, endZ,		red, green, blue,	0.0f, 1.0f,
+
+		endX, startY, endZ,		red, green, blue,	0.0f, 1.0f,
+		endX, endY, endZ,		red, green, blue,	1.0f, 1.0f,
+		endX, endY, startZ,		red, green, blue,	1.0f, 0.0f,
+
+		// left
+		startX, startY, startZ, red, green, blue,	0.0f, 0.0f,
+		startX, endY, startZ,	red, green, blue,	1.0f, 0.0f,
+		startX, startY, endZ,	red, green, blue,	0.0f, 1.0f,
+
+		startX, startY, endZ,	red, green, blue,	0.0f, 1.0f,
+		startX, endY, endZ,		red, green, blue,	1.0f, 1.0f,
+		startX, endY, startZ,	red, green, blue,	1.0f, 0.0f,
+
+		// up
+		startX, endY, startZ,	red, green, blue,	0.0f, 0.0f,
+		startX, endY, endZ,		red, green, blue,	0.0f, 1.0f,
+		endX, endY, startZ,		red, green, blue,	1.0f, 0.0f,
+
+		endX, endY, startZ,		red, green, blue,	1.0f, 0.0f,
+		endX, endY, endZ,		red, green, blue,	1.0f, 1.0f,
+		startX, endY, endZ,		red, green, blue,	0.0f, 1.0f,
+
+		//back
+		startX, startY, endZ,	red, green, blue,	0.0f, 0.0f,
+		startX, endY, endZ,		red, green, blue,	0.0f, 1.0f,
+		endX, endY, endZ,		red, green, blue,	1.0f, 1.0f,
+
+		startX, startY, endZ,	red, green, blue,	0.0f, 0.0f,
+		endX, endY, endZ,		red, green, blue,	1.0f, 1.0f,
+		endX, startY, endZ,		red, green, blue,	1.0f, 0.0f,
+	};
+	return vertices;
+}
+
+GLuint getCuboidVAO(
+	float startX,
+	float startY,
+	float startZ,
+	float endX,
+	float endY,
+	float endZ,
+	float red,
+	float green,
+	float blue
+  ){
+	auto vertices = getCuboidVertices(startX, startY, startZ, endX, endY, endZ, red, green, blue);
+	GLuint VAO, VBO;
+
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), &vertices[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0); // position attribute
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))); // color
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))); // texture coordinates
+	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	return VAO;
+}
+
+GLuint getCuboidVAO(float startX, float startY, float startZ, float endX, float endY, float endZ) {
+	float red = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	float green = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	float blue = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	return getCuboidVAO(startX, startY, startZ, endX, endY, endZ, red, green, blue);
+}
+
+GLuint getCuboidVAO(Container& container) {
+	return getCuboidVAO(container.getLeftX(), container.getDownY(), container.getFrontZ(), container.getRightX(), container.getUpY(), container.getBottomZ());
+}
+
+size_t getCuboidVerticesSize() {
+	return 288;
+}
 
 int main() {
 	srand(time(nullptr));
@@ -236,9 +351,8 @@ int main() {
 		containers.push_back(Container(width, height, length));
 	}
 	
-	//Population population(containers, warehouse, 0, 5, 10);
-	//population.run();
-
+	Population population(containers, warehouse, 0, 5, 10);
+	population.run();
 
 
 	if (glfwInit() != GL_TRUE)
@@ -267,31 +381,19 @@ int main() {
 
 		glViewport(0, 0, WIDTH, HEIGHT);
 
-		// Let's check what are maximum parameters counts
-		GLint nrAttributes;
-		glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
-		cout << "Max vertex attributes allowed: " << nrAttributes << std::endl;
-		glGetIntegerv(GL_MAX_TEXTURE_COORDS, &nrAttributes);
-		cout << "Max texture coords allowed: " << nrAttributes << std::endl;
-
 		// Build, compile and link shader program
 		ShaderProgram theProgram("shader.vert", "shader.frag");
 		
 
 
-		// Init containers
-		//Cuboid testContainer(0.0f, 8.0f, 0.0f, 12.0f, 10.0f, 20.0f, 0.5f, 0.5f, 0.5f);
+		vector<GLuint> containersVAOs;
+		containersVAOs.push_back(getCuboidVAO(-10.0f, -0.5f, -10.0f, 10.0f, 0.0f, 10.0f));
+		for (auto container : containers) {
+			containersVAOs.push_back(getCuboidVAO(container));
+		}
 
-		vector<Cuboid> containerCuboids;
 
-		Cuboid testContainer(0.0f, -0.5f, 0.0f, 10.0f, 0.0f, 10.0f, 0.0f, 0.0f, 1.0f);
-		containerCuboids.push_back(move(testContainer));
-
-		Cuboid testContainer2(0.0f, 0.0f, 0.0f, 10.0f, 2.0f, 10.0f, 1.0f, 0.0f, 0.0f);
-		containerCuboids.push_back(move(testContainer2));
-		//for (auto container : containers) {
-		//	containerCuboids.push_back(move(Cuboid(container)));
-		//}
+		
 		//cout << containerCuboids.size();
 
 		glBindVertexArray(0);
@@ -328,10 +430,15 @@ int main() {
 			theProgram.Use();
 
 			//testContainer.draw();
-			for (auto& cuboid : containerCuboids) {
-				//cuboid.draw();
-				glBindVertexArray(cuboid.getVAO());
-				glDrawArrays(GL_TRIANGLES, 0, cuboid.getVerticesSize());
+			//for (auto& cuboid : containerCuboids) {
+			//	//cuboid.draw();
+			//	glBindVertexArray(cuboid.getVAO());
+			//	glDrawArrays(GL_TRIANGLES, 0, cuboid.getVerticesSize());
+			//	glBindVertexArray(0);
+			//}
+			for (auto VAO : containersVAOs) {
+				glBindVertexArray(VAO);
+				glDrawArrays(GL_TRIANGLES, 0, getCuboidVerticesSize());
 				glBindVertexArray(0);
 			}
 

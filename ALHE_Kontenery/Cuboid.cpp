@@ -1,14 +1,7 @@
 #include "Cuboid.h"
 
-Cuboid::Cuboid(Container & container) : 
+Cuboid::Cuboid(Container & container) :
 	Cuboid(container.getLeftX(), container.getDownY(), container.getFrontZ(), container.getRightX(), container.getUpY(), container.getBottomZ()) {
-	cout << "T: " << container.getLeftX() << endl;
-	cout << "T: " << container.getDownY() << endl;
-	cout << "T: " << container.getFrontZ() << endl;
-	cout << "T: " << container.getRightX() << endl;
-	cout << "T: " << container.getUpY() << endl;
-	cout << "T: " << container.getBottomZ() << endl;
-	cout << endl << endl;
 }
 
 Cuboid::Cuboid(float startX, float startY, float startZ, float endX, float endY, float endZ) {
