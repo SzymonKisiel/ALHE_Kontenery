@@ -13,7 +13,11 @@ using namespace std;
 #include "Cuboid.h"
 
 #include <ctime>
+#include <fstream>
 #include "Population.h"
+#include "Container.h"
+
+#include <memory>
 
 const GLuint WIDTH = 800, HEIGHT = 600;
 
@@ -215,62 +219,28 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	}
 }
 
-GLuint LoadMipmapTexture(GLuint texId, const char* fname)
-{
-	int width, height;
-	unsigned char* image = SOIL_load_image(fname, &width, &height, 0, SOIL_LOAD_RGB);
-	if (image == nullptr)
-		throw exception("Failed to load texture file");
 
-	GLuint texture;
-	glGenTextures(1, &texture);
+int main() {
+	srand(time(nullptr));
 
-	glActiveTexture(texId);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	SOIL_free_image_data(image);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	return texture;
-}
-
-ostream& operator<<(ostream& os, const glm::mat4& mx)
-{
-	for (int row = 0; row < 4; ++row)
-	{
-		for (int col = 0; col < 4; ++col)
-			cout << mx[row][col] << ' ';
-		cout << endl;
+	fstream file;
+	file.open("containers.txt", ios::in);
+	if (!file.good())
+		return -1;
+	int width, height, length;
+	file >> width >> height >> length;
+	Container warehouse(width, height, length);
+	vector<Container> containers;
+	while (!file.eof()) {
+		file >> width >> height >> length;
+		containers.push_back(Container(width, height, length));
 	}
-	return os;
-}
-
-int main()
-{
-	srand(time(0));
-
-	vector <int> emptyChromosome;
-
-	Container container1(1,1,1);
-	Container container2(2,2,1);
-	Container container3(3,3,1);
-	Container container4(1,1,1);
-	Container container5(3,2,1);
-
-	Container magazine(5,5,1);
-
-	vector<Container> packList;
+	
+	//Population population(containers, warehouse, 0, 5, 10);
+	//population.run();
 
 
-	packList.push_back(container1);
-	packList.push_back(container2);
-	packList.push_back(container3);
-	packList.push_back(container4);
-	packList.push_back(container5);
 
-	Population population(packList, magazine, 0, 5, 10);
-
-	population.run();
 	if (glfwInit() != GL_TRUE)
 	{
 		cout << "GLFW initialization failed" << endl;
@@ -310,26 +280,21 @@ int main()
 
 
 		// Init containers
-		Cuboid testContainer(0.0f, 8.0f, 0.0f, 12.0f, 10.0f, 20.0f, 1.0f, 1.0f, 1.0f);
+		//Cuboid testContainer(0.0f, 8.0f, 0.0f, 12.0f, 10.0f, 20.0f, 0.5f, 0.5f, 0.5f);
 
+		vector<Cuboid> containerCuboids;
 
+		Cuboid testContainer(0.0f, -0.5f, 0.0f, 10.0f, 0.0f, 10.0f, 0.0f, 0.0f, 1.0f);
+		containerCuboids.push_back(move(testContainer));
 
-		// vertex geometry data
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
-		glEnableVertexAttribArray(0);
+		Cuboid testContainer2(0.0f, 0.0f, 0.0f, 10.0f, 2.0f, 10.0f, 1.0f, 0.0f, 0.0f);
+		containerCuboids.push_back(move(testContainer2));
+		//for (auto container : containers) {
+		//	containerCuboids.push_back(move(Cuboid(container)));
+		//}
+		//cout << containerCuboids.size();
 
-		// vertex color data
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-		glEnableVertexAttribArray(1);
-
-		// vertex texture coordinates
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
-		glEnableVertexAttribArray(2);
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
-
-		glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs)
-		
+		glBindVertexArray(0);
 
 		// main event loop
 		while (!glfwWindowShouldClose(window))
@@ -355,19 +320,20 @@ int main()
 			glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 
-			glm::mat4 trans;
-			static GLfloat rot_angle = 0.0f;
-			trans = glm::rotate(trans, -glm::radians(rot_angle), glm::vec3(1.0, 0.0, 0.0));
-	/*		rot_angle += 0.05f;
-			if (rot_angle >= 360.0f)
-				rot_angle -= 360.0f;*/
+			glm::mat4 trans = glm::mat4();
 			GLuint transformLoc = glGetUniformLocation(theProgram.get_programID(), "transform");
 			glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 			// Draw our first triangle
 			theProgram.Use();
 
-			testContainer.draw();
+			//testContainer.draw();
+			for (auto& cuboid : containerCuboids) {
+				//cuboid.draw();
+				glBindVertexArray(cuboid.getVAO());
+				glDrawArrays(GL_TRIANGLES, 0, cuboid.getVerticesSize());
+				glBindVertexArray(0);
+			}
 
 			// Swap the screen buffers
 			glfwSwapBuffers(window);
