@@ -353,6 +353,8 @@ int main() {
 	
 	Population population(containers, warehouse, 5, 10);
 	population.run();
+	auto packedContainers = population.getBestSubject().getPackedList();
+
 
 	if (glfwInit() != GL_TRUE)
 	{
@@ -387,13 +389,9 @@ int main() {
 
 		vector<GLuint> containersVAOs;
 		containersVAOs.push_back(getCuboidVAO(-10.0f, -0.5f, -10.0f, 10.0f, 0.0f, 10.0f));
-		for (auto container : containers) {
+		for (auto container : packedContainers) {
 			containersVAOs.push_back(getCuboidVAO(container));
 		}
-
-
-		
-		//cout << containerCuboids.size();
 
 		glBindVertexArray(0);
 
