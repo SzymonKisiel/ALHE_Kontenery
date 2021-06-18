@@ -351,9 +351,8 @@ int main() {
 		containers.push_back(Container(width, height, length));
 	}
 	
-	Population population(containers, warehouse, 0, 5, 10);
+	Population population(containers, warehouse, 5, 10);
 	population.run();
-
 
 	if (glfwInit() != GL_TRUE)
 	{
