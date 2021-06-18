@@ -86,6 +86,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Container.cpp" />
+    <ClCompile Include="ContainersGenerator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OpenGLFunctions.cpp" />
     <ClCompile Include="Population.cpp" />
@@ -100,6 +101,7 @@
   <ItemGroup>
     <ClInclude Include="Container.h" />
     <ClInclude Include="OpenGLFunctions.h" />
+    <ClInclude Include="ContainersGenerator.h" />
     <ClInclude Include="Population.h" />
     <ClInclude Include="Cuboid.h" />
     <ClInclude Include="shprogram.h" />
