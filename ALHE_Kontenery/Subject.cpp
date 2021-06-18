@@ -191,6 +191,10 @@ int Subject::getValue() {
 	return this->value;
 }
 
+vector <Container> Subject::getPackedList() {
+	return this->packedList;
+}
+
 void Subject::print() {
 	cout << "Magazyn : " << endl;
 	this->container.printContainer();
