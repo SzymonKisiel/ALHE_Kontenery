@@ -160,8 +160,7 @@ bool Subject::putContainer(Container container) {
 
 	while (sort) {
 		sort = false;
-
-		for (int i = 0; i < this->freeSpaceList.size() - 1; ++i) {
+		for (int i = 0; this->freeSpaceList.size() != 0 && i < this->freeSpaceList.size() - 1; ++i) {
 			if (this->freeSpaceList[i].getDownY() > this->freeSpaceList[i + 1].getDownY()) {
 				Container temp = this->freeSpaceList[i];
 				this->freeSpaceList[i] = this->freeSpaceList[i + 1];
@@ -197,11 +196,11 @@ vector <Container> Subject::getPackedList() {
 
 void Subject::print() {
 	cout << "Magazyn : " << endl;
-	this->container.printContainer();
+	this->container.print();
 	cout << "Zapakowane kontenery: " << endl;
 	for (int i = 0; i < this->packedList.size(); ++i) {
 		cout << "-----------------------------" << endl;
-		packedList[i].printContainer();
+		packedList[i].print();
 	}
 	cout << "-----------------------------" << endl;
 }
