@@ -4,6 +4,24 @@
 
 using namespace std;
 
+enum OrientationType {
+    DEFAULT,
+    ROTATE_X,
+    ROTATE_Y,
+    ROTATE_Z,
+    ROTATE_XZ,
+    ROTATE_ZX
+};
+
+static const string ORIENTATION_STRING[]{
+    "DEFAULT",
+    "ROTATE_X",
+    "ROTATE_Y",
+    "ROTATE_Z",
+    "ROTATE_XZ",
+    "ROTATE_ZX"
+};
+
 class Container {
 private:
     int height;
@@ -19,15 +37,6 @@ private:
     int frontZ;
 
     int number;
-public:
-    enum class OrientationType {
-        DEFAULT,
-        ROTATE_X,
-        ROTATE_Y,
-        ROTATE_Z,
-        ROTATE_XZ,
-        ROTATE_ZX
-    };
 private:
     OrientationType orientation = OrientationType::DEFAULT;
 public:

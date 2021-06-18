@@ -53,15 +53,52 @@ Container::Container(int width, int height, int length, int number) {
 }
 
 void Container::setPosition(int positionX, int positionY, int positionZ) {
-    this->rightX = this->width + positionX;
-    this->leftX = positionX;
-    this->upY = this->height + positionY;
-    this->downY = positionY;
-    this->bottomZ = this->length + positionZ;
-    this->frontZ = positionZ;
+    int tempX;
+    int tempY;
+    int tempZ;
+
+    switch (orientation) {
+    case OrientationType::DEFAULT:
+        tempX = positionX;
+        tempY = positionY;
+        tempZ = positionZ;
+        break;
+    case OrientationType::ROTATE_X:
+        tempX = positionX;
+        tempY = positionZ;
+        tempZ = positionY;
+        break;
+    case OrientationType::ROTATE_Y:
+        tempX = positionZ;
+        tempY = positionY;
+        tempZ = positionX;
+        break;
+    case OrientationType::ROTATE_Z:
+        tempX = positionY;
+        tempY = positionX;
+        tempZ = positionZ;
+        break;
+    case OrientationType::ROTATE_XZ:
+        tempX = positionZ;
+        tempY = positionX;
+        tempZ = positionY;
+        break;
+    case OrientationType::ROTATE_ZX:
+        tempX = positionY;
+        tempY = positionZ;
+        tempZ = positionX;
+        break;
+    }
+
+    this->rightX = this->width + tempX;
+    this->leftX = tempX;
+    this->upY = this->height + tempY;
+    this->downY = tempY;
+    this->bottomZ = this->length + tempZ;
+    this->frontZ = tempZ;
 }
 
-void Container::changeSize(int width, int height, int length) {
+void Container::changeSize(int width, int height, int length) { //changeSize of container in not default orientation may not work
     this->height = height;
     this->width = width;
     this->length = length;
@@ -74,9 +111,9 @@ void Container::changeSize(int width, int height, int length) {
 }
 
 bool Container::checkCollision(Container container) {
-    bool collisionX = this->rightX > container.leftX && this->leftX < container.rightX;
-    bool collisionY = this->upY > container.downY && this->downY < container.upY;
-    bool collisionZ = this->bottomZ > container.frontZ && this->frontZ < container.bottomZ;
+    bool collisionX = this->getRightX() > container.getLeftX() && this->getLeftX() < container.getRightX();
+    bool collisionY = this->getUpY() > container.getDownY() && this->getDownY() < container.getUpY();
+    bool collisionZ = this->getBottomZ() > container.getFrontZ() && this->getFrontZ() < container.getBottomZ();
 
     if (collisionX && collisionY && collisionZ)
         return true;
@@ -237,6 +274,8 @@ int Container::getBottomZ() {
 
 void Container::print() {
     cout << "Container {\n";
+    cout << '\t' << "orientation:\t" << ORIENTATION_STRING[orientation] << '\n';
+    cout << '\n';
     cout << '\t' << "leftX:  \t" << getLeftX() << '\n';
     cout << '\t' << "rightX: \t" << getRightX() << '\n';
     cout << '\t' << "downY:  \t" << getDownY() << '\n';

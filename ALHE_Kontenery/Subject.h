@@ -21,11 +21,15 @@ class Subject
 
 	public:
 		vector <int> chromosome;
+		vector <OrientationType> orientationChromosome;
 
 		Subject();
 		Subject(vector <int> chromosome, vector <Container> packListIn, Container container);
+		Subject(vector <int> chromosome, vector <OrientationType> orientationChromosome, vector <Container> packListIn, Container container);
 		vector <int> createChromosome(int n); 
-		vector <int> mutate(); 
+		vector <OrientationType> createOrientationChromosome(int n);
+		vector <int> mutate();
+		vector <OrientationType> mutateOrientation();
 		int numberOfMutations(); 
 		vector <Container> packListInOrder(vector <int> chromosome, vector <Container> packListIn);
 		int calcValue();

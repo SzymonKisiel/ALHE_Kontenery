@@ -8,7 +8,7 @@ Population::Population(vector <Container> packList, Container container, int mu,
 
 	for (int i = 0; i < mu; ++i) {
 		vector <int> emptyChromosome;
-		Subject subject(emptyChromosome, this->packList, this->container);
+		Subject subject(emptyChromosome, vector<OrientationType>(), this->packList, this->container);
 		parents.push_back(subject);
 	}
 
@@ -21,7 +21,8 @@ void Population::run() {
 		int randIndex = rand() % parents.size();
 		Subject parent = parents[randIndex];
 		vector<int> newChromosome = parent.mutate();
-		Subject offspring(newChromosome, this->packList, this->container);
+		vector<OrientationType> newChromosome2 = parent.mutateOrientation();
+		Subject offspring(newChromosome, newChromosome2, this->packList, this->container);
 		offsprings.push_back(offspring);
 	}
 

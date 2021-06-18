@@ -10,8 +10,28 @@ Subject::Subject(vector <int> chromosome, vector <Container> packListIn, Contain
 
 	if (chromosome.empty()) this->chromosome = this->createChromosome(this->n);
 	else {
-		for (int i = 0; i < chromosome.size(); ++i) this->chromosome.push_back(chromosome[i]);
+		this->chromosome = chromosome;
 	} 
+
+	this->packList = this->packListInOrder(this->chromosome, packListIn);
+	this->container = container;
+	this->freeSpaceList.push_back(container);
+	this->value = this->calcValue();
+
+}
+
+Subject::Subject(vector <int> chromosome, vector <OrientationType> orientationChromosome, vector <Container> packListIn, Container container) {
+	this->n = packListIn.size();
+
+	if (chromosome.empty()) this->chromosome = this->createChromosome(this->n);
+	else {
+		this->chromosome = chromosome;
+	}
+
+	if (orientationChromosome.empty()) this->orientationChromosome = this->createOrientationChromosome(this->n);
+	else {
+		this->orientationChromosome = orientationChromosome;
+	}
 
 	this->packList = this->packListInOrder(this->chromosome, packListIn);
 	this->container = container;
@@ -34,6 +54,19 @@ vector <int> Subject::createChromosome(int n) {
 		randNumber = rand() % items.size();
 		chromosome.push_back(items[randNumber]);
 		items.erase(items.begin() + randNumber);
+	}
+
+	return chromosome;
+}
+
+vector <OrientationType> Subject::createOrientationChromosome(int n) {
+	vector <OrientationType> chromosome;
+
+	OrientationType randOrientation;
+
+	for (int i = 0; i < n; ++i) {
+		randOrientation = static_cast<OrientationType>(rand() % 6);
+		chromosome.push_back(randOrientation);
 	}
 
 	return chromosome;
@@ -62,6 +95,23 @@ vector <int> Subject::mutate() {
 	return newChromosome;
 }
 
+vector <OrientationType> Subject::mutateOrientation() {
+	int numberOfMutations = this->numberOfMutations();
+	vector <OrientationType> newChromosome = this->orientationChromosome;
+
+	int randIndex;
+	OrientationType randOrientation;
+
+	for (int i = 0; i < numberOfMutations; ++i) {
+		randOrientation = static_cast<OrientationType>(rand() % 6);
+		randIndex = rand() % n;
+
+		newChromosome[randIndex] = randOrientation;
+	}
+
+	return newChromosome;
+}
+
 int Subject::numberOfMutations() {
 	const int SIZE = 20;
 
@@ -81,6 +131,10 @@ vector <Container> Subject::packListInOrder(vector <int> chromosome, vector <Con
 
 	for (int i = 0; i < chromosome.size(); ++i) {
 		packListInOrder.push_back(packListIn[chromosome[i]]);
+	}
+
+	for (int i = 0; i < packListInOrder.size(); ++i) {
+		packListInOrder[i].setOrientation(orientationChromosome[i]);
 	}
 
 	return packListInOrder;
