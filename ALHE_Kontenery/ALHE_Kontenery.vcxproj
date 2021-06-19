@@ -90,7 +90,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OpenGLFunctions.cpp" />
     <ClCompile Include="Population.cpp" />
-    <ClCompile Include="Cuboid.cpp" />
     <ClCompile Include="shprogram.cpp" />
     <ClCompile Include="Subject.cpp" />
   </ItemGroup>
@@ -103,7 +102,6 @@
     <ClInclude Include="OpenGLFunctions.h" />
     <ClInclude Include="ContainersGenerator.h" />
     <ClInclude Include="Population.h" />
-    <ClInclude Include="Cuboid.h" />
     <ClInclude Include="shprogram.h" />
     <ClInclude Include="Subject.h" />
   </ItemGroup>
