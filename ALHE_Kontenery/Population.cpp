@@ -22,7 +22,7 @@ void Population::run() {
 		Subject parent = parents[randIndex];
 		vector<int> newChromosome = parent.mutate();
 		vector<OrientationType> newOrientationChromosome = parent.mutateOrientation();
-		Subject offspring(newChromosome, newChromosome2, this->packList, this->container);
+		Subject offspring(newChromosome, newOrientationChromosome, this->packList, this->container);
 		offsprings.push_back(offspring);
 	}
 
