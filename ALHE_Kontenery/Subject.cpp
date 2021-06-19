@@ -122,7 +122,6 @@ int Subject::numberOfMutations() {
 		// P(4) = 10 %
 		// P(5) = 5 %
 	int randNumber = rand()%SIZE;
-		// dodaæ srand
 	return mutations[randNumber];
 }
 
