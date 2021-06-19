@@ -3,23 +3,23 @@
 #include "shprogram.h"
 #include <GLFW/glfw3.h>
 #include <SOIL.h>
-#include <iostream>
-#include <windows.h>
-using namespace std;
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <vector>
-#include "Cuboid.h"
 
+#include <vector>
 #include <ctime>
 #include <fstream>
-#include "Population.h"
-#include "Container.h"
-
 #include <memory>
+#include <iostream>
+#include <windows.h>
 
 #include "OpenGLFunctions.h"
+#include "Population.h"
+#include "Container.h"
+#include "ContainersGenerator.h"
+
+using namespace std;
 
 const GLuint WIDTH = 800, HEIGHT = 600;
 
@@ -226,26 +226,102 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 int main() {
 	srand(time(nullptr));
 
-	fstream file;
-	file.open("containers.txt", ios::in);
-	if (!file.good())
-		return -1;
-	int width, height, length;
-	file >> width >> height >> length;
-	Container warehouse(width, height, length);
 	vector<Container> containers;
-	while (!file.eof()) {
-		file >> width >> height >> length;
-		containers.push_back(Container(width, height, length));
-	}
+	Container warehouse;
+
+	int option;
+	cout << "0 - pobierz kontenery z pliku\n"
+		 << "1 - wygeneruj kontenery\n";
+	cin >> option;
 	
-	Population population(containers, warehouse, 5, 10);
-	for (int i = 0; i < 100; ++i) {
-		population.run();
+	int mu, lambda;
+	cout << "Podaj parametr mu: ";
+	cin >> mu;
+	cout << "Podaj parametr lambda: ";
+	cin >> lambda;
+
+	unsigned int seed;
+	int maxAmountOfDivisions;
+	switch (option) {
+		case 0:	{ 
+			fstream file;
+			file.open("containers.txt", ios::in);
+			if (!file.good())
+				return -1;
+			int width, height, length;
+			file >> width >> height >> length;
+			warehouse = Container(width, height, length);
+
+			while (!file.eof()) {
+				file >> width >> height >> length;
+				containers.push_back(Container(width, height, length));
+			}
+		}
+			break;
+
+		case 1: {
+			int width, height, length;
+			cout << "Podaj wymiary magazynu:\n";
+			cin >> width >> height >> length;
+
+			cout << "Podaj ziarno do generatora (0 - losowe ziarno): ";
+			cin >> seed;
+
+			cout << "Podaj parametr maxAmountOfDivisions w generatorze: ";
+			cin >> maxAmountOfDivisions;
+
+			warehouse = Container(width, height, length);
+			ContainersGenerator generator;
+			if (seed)
+				generator = ContainersGenerator(warehouse, maxAmountOfDivisions, seed);
+			else 
+				generator = ContainersGenerator(warehouse, maxAmountOfDivisions);
+
+			containers = generator.getContainerList();
+		}
+			break;
+
+		default:
+			cout << "Wrong option\n";
+			return -1;
 	}
-	//auto best = population.getBestSubject();
+
+	
+
+	
+
+	Population population(containers, warehouse, mu, lambda);
+	int sampleTime = 10;
+	
+	fstream output;
+	const string outputName = "out.txt";
+	output.open(outputName, ios::out | ios::trunc); //clear file
+	output << "warehouse = " << warehouse.getWidth() << "x" << warehouse.getHeight() << "x" << warehouse.getLength() << endl;
+	output << "mu = " << mu << endl;
+	output << "lambda = " << lambda << endl;
+	if (option == 1) {
+		output << "seed = " << seed << endl;
+		output << "maxAmountOfDivisions = " << maxAmountOfDivisions << endl;
+	}
+	output << endl;
+	output.close();
+
+	for (int t = 0; t < 100; ++t) {
+		for (int i = 0; i < sampleTime; ++i) {
+			population.run();
+		}
+		output.open(outputName, ios::out | ios::app);
+		auto best = population.getBestSubject();
+		output << t*sampleTime << '\t' << static_cast<double>(best.getValue()) * 100 / warehouse.getCapacity() << '\n';
+		output.close();
+	}
+	auto best = population.getBestSubject();
 	//best.print();
+	cout << "Value: " << best.getValue() << endl;
+	cout << "Max: " << warehouse.getCapacity() << endl;
+	cout << "Percent: " << static_cast<double>(best.getValue()) * 100 / warehouse.getCapacity() << "%" << endl;
 	auto packedContainers = population.getBestSubject().getPackedList();
+	
 
 
 	if (glfwInit() != GL_TRUE)
