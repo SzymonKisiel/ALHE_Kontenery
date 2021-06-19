@@ -255,7 +255,6 @@ int main() {
 	}
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	try
 	{
@@ -278,11 +277,12 @@ int main() {
 		ShaderProgram theProgram("shader.vert", "shader.frag");
 		
 
-
+		// Init containers VAOs
 		vector<GLuint> containersVAOs;
 		for (auto container : packedContainers) {
 			containersVAOs.push_back(getCuboidVAO(container));
 		}
+		// Init warehouse VAO
 		GLuint warehouseVAO = getWarehouseVAO(warehouse);
 
 		glBindVertexArray(0);
@@ -294,40 +294,39 @@ int main() {
 			// Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
 			glfwPollEvents();
 
-			// Clear the colorbuffer
+			// Clear the colorbuffer and the depthbuffer
 			glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			glEnable(GL_DEPTH_TEST);
 
-			
+			// Assign shader matrices
+			glm::mat4 trans = glm::mat4();
 			glm::mat4 view = glm::lookAt(cameraPos, cameraDirection + cameraPos, cameraUp);
 			glm::mat4 projection = glm::perspective(45.0f, (GLfloat)WIDTH / (GLfloat)HEIGHT, 1.0f, 150.0f);
 			
+			GLuint transformLoc = glGetUniformLocation(theProgram.get_programID(), "transform");
 			GLint viewLoc = glGetUniformLocation(theProgram.get_programID(), "view");
 			GLint projLoc = glGetUniformLocation(theProgram.get_programID(), "projection");
 			
+			glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 			glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-
-			glm::mat4 trans = glm::mat4();
-			GLuint transformLoc = glGetUniformLocation(theProgram.get_programID(), "transform");
-			glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-
-			// Draw our first triangle
 			theProgram.Use();
 			
+			// Draw containers
 			for (auto VAO : containersVAOs) {
 				glBindVertexArray(VAO);
 				glDrawArrays(GL_TRIANGLES, 0, cuboidVerticesSize);
 				glBindVertexArray(0);
 			}
+
+			// Draw warehouse
 			glBindVertexArray(warehouseVAO);
 			glDrawArrays(GL_TRIANGLES, 0, warehouseVerticesSize);
 			glBindVertexArray(0);
-
-
+			
 			// Swap the screen buffers
 			glfwSwapBuffers(window);
 			Sleep(1);
