@@ -1,14 +1,20 @@
 #include "ContainersGenerator.h"
 
-ContainersGenerator::ContainersGenerator(Container container, int maxAmountOfDivisions) {
+ContainersGenerator::ContainersGenerator(Container container, int maxAmountOfDivisions, unsigned int seed) {
 	this->maxAmountOfDivisions = maxAmountOfDivisions;
 
 	this->container = container;
 
+	srand(seed);
+
 	this->createContainerListX();
 	this->createContainerListXY();
 	this->createContainerListFinal();
+
+	srand(time(nullptr));
 }
+
+ContainersGenerator::ContainersGenerator(Container container, int maxAmountOfDivisions): ContainersGenerator(container, maxAmountOfDivisions, time(nullptr)) {}
 
 vector <int> ContainersGenerator::divide(int n, int size) {
 	vector <int> items;

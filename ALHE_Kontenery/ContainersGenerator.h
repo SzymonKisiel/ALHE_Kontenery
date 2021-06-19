@@ -19,6 +19,7 @@ class ContainersGenerator
 		vector<Container> containerListFinal;
 	public:
 		ContainersGenerator(Container container, int maxAmountOfDivisions);
+		ContainersGenerator(Container container, int maxAmountOfDivisions, unsigned int seed);
 		vector <int> divide(int n, int size);
 		void createContainerListX();
 		void createContainerListXY();
